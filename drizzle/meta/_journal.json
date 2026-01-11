@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1768085478152,
-      "tag": "0000_romantic_photon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1768086000517,
-      "tag": "0001_giant_lockheed",
+      "when": 1768101134878,
+      "tag": "0000_slow_kree",
       "breakpoints": true
     }
   ]
