@@ -13,3 +13,9 @@
 - [x] Remove authentication/sign-in logic
 - [x] Elegant, clean design
 - [x] Unit tests for core functionality
+
+
+## GitHub Integration
+
+- [ ] Create public GitHub repository
+- [ ] Push code to repository
