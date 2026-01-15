@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +14,6 @@ import {
   Mail, 
   Upload, 
   X, 
-  Plus, 
   Loader2, 
   CheckCircle2, 
   Clock, 
@@ -22,6 +21,10 @@ import {
   Sparkles,
   Zap
 } from "lucide-react";
+import { AutocompleteInput } from "@/components/AutocompleteInput";
+import { getCompanySuggestions } from "@/data/companies";
+import { getJobRoleSuggestions, popularJobRoles } from "@/data/jobRoles";
+import { searchCompaniesApi, searchJobRolesExpanded } from "@/lib/searchApi";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -99,6 +102,15 @@ export default function Home() {
   const removeRole = (role: string) => {
     setTargetRoles(targetRoles.filter(r => r !== role));
   };
+
+  // API search callbacks for autocomplete
+  const handleCompanyApiSearch = useCallback(async (query: string): Promise<string[]> => {
+    return searchCompaniesApi(query);
+  }, []);
+
+  const handleRoleApiSearch = useCallback(async (query: string): Promise<string[]> => {
+    return searchJobRolesExpanded(query, popularJobRoles);
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -270,26 +282,15 @@ export default function Home() {
                   <Building2 className="h-4 w-4" />
                   Target Companies
                 </Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="e.g., Google, Microsoft, Apple..."
-                    value={companyInput}
-                    onChange={(e) => setCompanyInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCompany())}
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-violet-500"
-                    disabled={isRegistered}
-                  />
-                  <Button 
-                    type="button" 
-                    onClick={addCompany} 
-                    variant="outline" 
-                    size="icon"
-                    className="border-slate-700 hover:bg-slate-800 shrink-0"
-                    disabled={isRegistered}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
+                <AutocompleteInput
+                  placeholder="e.g., Google, Microsoft, Apple..."
+                  value={companyInput}
+                  onChange={setCompanyInput}
+                  onAdd={addCompany}
+                  getSuggestions={getCompanySuggestions}
+                  onApiSearch={handleCompanyApiSearch}
+                  disabled={isRegistered}
+                />
                 <div className="flex flex-wrap gap-2 min-h-[32px]">
                   {targetCompanies.map((company) => (
                     <Badge 
@@ -314,26 +315,15 @@ export default function Home() {
                   <Briefcase className="h-4 w-4" />
                   Target Job Roles
                 </Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="e.g., Software Engineer, Product Manager..."
-                    value={roleInput}
-                    onChange={(e) => setRoleInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addRole())}
-                    className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-violet-500"
-                    disabled={isRegistered}
-                  />
-                  <Button 
-                    type="button" 
-                    onClick={addRole} 
-                    variant="outline" 
-                    size="icon"
-                    className="border-slate-700 hover:bg-slate-800 shrink-0"
-                    disabled={isRegistered}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
+                <AutocompleteInput
+                  placeholder="e.g., Software Engineer, Product Manager..."
+                  value={roleInput}
+                  onChange={setRoleInput}
+                  onAdd={addRole}
+                  getSuggestions={getJobRoleSuggestions}
+                  onApiSearch={handleRoleApiSearch}
+                  disabled={isRegistered}
+                />
                 <div className="flex flex-wrap gap-2 min-h-[32px]">
                   {targetRoles.map((role) => (
                     <Badge 
